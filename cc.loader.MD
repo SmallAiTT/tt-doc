@@ -11,6 +11,10 @@
 
 ## API描述
 
+（注：以下描述中，全路径的意思为 "资源的根路径" + "资源路径"，
+例如设置图片资源根路径(cc.loader.resPath)为"res"，图片资源路径为"a.png"，
+那么全路径为"res/a.png"，非全路径为"a.png"。）
+
 ##### resPath
 
 资源的根路径（音频资源除外）。
@@ -116,6 +120,13 @@ url         资源路径
 返回值：资源全路径。
 ```
 
+用法：
+
+```script
+cc.loader.getUrl("res", "a.png");//得到的结果为："res/a.png"
+cc.loader.getUrl("a.png");//如果cc.loader.resPath设置为"res"，那么得到的结果为："res/a.png"。
+```
+
 ##### load
 
 加载资源的入口api。相当于原来的`cc.Loader.preload`。
@@ -179,7 +190,7 @@ cc.loader.load(res);
 extNames        后缀名（String数组或者String）
 loader          loader对象，
                 必须包含一个名为"load"的方法，
-                方法将接受三个参数：url, res, cb，分别表示资源全路径、res对象（就是cc.loader.load方法的资源列表的项），回调函数。
+                方法将接受四个个参数：realUrl, url, res, cb，分别表示资源全路径、原来的路径、res对象（就是cc.loader.load方法的资源列表的项），回调函数。
                 可能包含一个名为"getBasePath"的方法，该方法返回该类型资源的根路径，不设置该方法默认为cc.loader.resPath。
 
 返回值：无
@@ -189,19 +200,61 @@ loader          loader对象，
 
 ```script
 cc.txtLoader = {
-    load : function(url, res, cb){
-        var cache = cc.loader.cache, obj = cache[url];
-        if(obj) return cb(obj);
-        cc.loader.loadTxt(url, function(err, txt){
-            if(err) return cb(err);
-            if(txt == null) return cb(null, null);
-            obj = txt;
-            cache[url] = obj;
-            cb(null, obj);
-        });
+    load : function(realUrl, url, res, cb){
+        cc.loader.loadTxt(realUrl, cb);
     }
 }
 cc.loader.register(["plist", "xml", "fnt", "tmx", "tsx"], cc.txtLoader);
+```
+
+##### getRes
+
+获取资源缓存数据。
+
+```script
+参数：
+url         资源路径（非全路径）
+
+返回值：     资源数据
+```
+
+用法：
+
+```script
+var img = cc.loader.getRes("a.png");
+```
+
+##### release
+
+释放资源缓存数据。
+
+```script
+参数：
+url         资源路径（非全路径）
+
+返回值：     无
+```
+
+用法：
+
+```script
+cc.loader.release("a.png");
+```
+
+##### releaseAlll
+
+释放所有的资源缓存数据
+
+```script
+参数：         无
+
+返回值：       无
+```
+
+用法：
+
+```script
+cc.loader.releaseAll();
 ```
 
 ## 注册loader插件
