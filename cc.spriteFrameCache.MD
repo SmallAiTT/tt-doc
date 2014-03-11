@@ -1,6 +1,6 @@
 # cc.spriteFrameCache 改造说明
 
-将Plist的解析工作转移到了cc.plistLoader中去，对SAXParser进行了改造，`parse`改为`parsePlist`，`tmxParse`改成`parseTmx`。
+将Plist的解析工作转移到了cc.plistLoader中去，对SAXParser进行了改造。
 
 统一了引擎创建SpriteFrame的数据格式：
 
